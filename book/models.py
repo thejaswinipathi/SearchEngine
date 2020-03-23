@@ -3,6 +3,7 @@ from django.db import models
 
 class Book(models.Model):
     title = models.CharField(max_length=128, null=False)
+    summary = models.CharField(max_length=128, null=False)
     author = models.CharField(max_length=128)
     id = models.IntegerField(primary_key=True, null=False)
 
