@@ -1,6 +1,9 @@
 import json
 import re
 import codecs
+import os
+from book.models import Book, Words, WordCount
+import re
 
 def unmangle_utf8(match):
     escaped = match.group(0)                   # '\\u00e2\\u0082\\u00ac'
@@ -11,8 +14,40 @@ def unmangle_utf8(match):
         return buffer.decode('utf8')           # '€'
     except UnicodeDecodeError:
         print("Could not decode buffer: %s" % buffer)
-
-with open('data.json') as f:
-    stringNew = f.read()
-    data = json.loads(re.sub(r"(?i)(?:\\u00[0-9a-f]{2})+", unmangle_utf8, stringNew))
-    print(data["titles"][13])
+def hasNumbers(inputString):
+    return bool(re.search(r'\d', inputString))
+def populate_data():
+    currentDirectory = os.path.dirname(__file__)
+    dataFilePath = os.path.join(currentDirectory, 'data.json')
+    with open(dataFilePath) as f:
+        stringNew = f.read()
+        data = json.loads(re.sub(r"(?i)(?:\\u00[0-9a-f]{2})+", unmangle_utf8, stringNew))
+        lengthOfData = len(data["titles"])
+        print("total is "+str(lengthOfData))
+        for i in range(lengthOfData):
+            print(i)
+            title = data["titles"][i]
+            summary = data["summaries"][i]["summary"]
+            parts = summary.split(":")
+            summary = parts[1]
+            parts = re.split(r'[;\-,.\s]\s*',summary)
+            titleParts = re.split(r'[;,.\s]\s*', title)
+            parts.extend(titleParts)
+            nonEmptyParts = [part.lower() for part in parts if len(part)>0 and (not hasNumbers(part))]
+            dict = {}
+            for part in nonEmptyParts:
+                if part in dict:
+                    dict[part] +=1
+                else:
+                    dict[part] =1
+            id = data["summaries"][i]["id"]
+            b = Book(title = title, id = id)
+            b.save()
+            for key in dict:
+                try:
+                    w = Words.ojects.get(word = key)
+                except:
+                    w = Words(word=key)
+                    w.save()
+                wc = WordCount(book = b, word = w, count = dict[key])
+                wc.save()
