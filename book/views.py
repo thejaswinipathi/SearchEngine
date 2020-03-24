@@ -1,19 +1,67 @@
-from django.shortcuts import render
-from rest_framework.decorators import api_view
-from django.http import HttpResponse
+from rest_framework.decorators import api_view, renderer_classes
 from book.models import *
 import re
 from book.scripts import hasNumbers
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
 
 
+# API for task1
+# It returns results in the form of a list of dictonaries
+# Sample input to the POST request API
+#API call - http://127.0.0.1:8000/book/getInfo/
+#JSON Body
+# {
+# 	"query": "i wish there is a change",
+# 	"k":3
+# }
 @api_view(['POST'])
+@renderer_classes([JSONRenderer])
 def query_book(request):
     if request.method == 'POST':
-        print("request.data")
-        print(request.data)
-    return HttpResponse("Hello World!")
+        query =request.data["query"]
+        k = request.data["k"]
+        resultList = []
+        result = find_words(query, k)
+        for item in result:
+            dict = {}
+            dict["summary"] = Book.objects.get(id = item).summary
+            dict["id"] = item
+            resultList.append(dict)
+    return Response(resultList)
 
 
+#API for task2
+#API to return a list of list of dictonaries
+# Sample input to the POST request API
+#API call - http://127.0.0.1:8000/book/getInfoList/
+#JSON Body
+# {
+# 	"queries": ["my life change", "i love coding"],
+# 	"k":3
+# }
+@api_view(['POST'])
+@renderer_classes([JSONRenderer])
+def query_book_list(request):
+    if request.method == 'POST':
+        queries =request.data["queries"]
+        k = request.data["k"]
+        totalResult = []
+        for query in queries:
+            resultList = []
+            result = find_words(query, k)
+            for item in result:
+                dict = {}
+                dict["summary"] = Book.objects.get(id = item).summary
+                dict["id"] = item
+                dict["author"] = Book.objects.get(id = item).author
+                dict["query"] = query
+                resultList.append(dict)
+            totalResult.append(resultList)
+    return Response(totalResult)
+
+
+#function which returns the Book IDs of top k matches of the query
 def find_words(query, k):
     parts = re.split(r'[;\-,.\s]\s*', query)
     nonEmptyParts = [part.lower() for part in parts if len(part) > 0 and (not hasNumbers(part))]
@@ -41,10 +89,7 @@ def find_words(query, k):
     topK = []
     for key in sortedDict:
         i+=1
-        dict = {}
-        dict["summary"] = Book.objects.get(id = key).summary
-        dict["id"] = key
-        topK.append(dict)
+        topK.append(key)
         if (i==k):
             break
-    print(topK)
+    return(topK)

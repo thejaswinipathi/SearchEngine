@@ -12,6 +12,7 @@ class Words(models.Model):
     word = models.CharField(max_length=128, null=False)
 
 
+#class to store the number of times a word occured in a book summary
 class WordCount(models.Model):
     book = models.ForeignKey('Book', on_delete=models.CASCADE, null=False)
     word = models.ForeignKey('Words', on_delete=models.CASCADE, null=False)

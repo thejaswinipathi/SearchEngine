@@ -1,5 +1,4 @@
 import json
-import re
 import codecs
 import os
 import requests
@@ -7,6 +6,7 @@ from book.models import Book, Words, WordCount
 import re
 
 
+#function to parse special characters in the input file
 def unmangle_utf8(match):
     escaped = match.group(0)                   # '\\u00e2\\u0082\\u00ac'
     hexstr = escaped.replace(r'\u00a0', '')      # 'e282ac'
@@ -16,8 +16,14 @@ def unmangle_utf8(match):
         return buffer.decode('utf8')           # '€'
     except UnicodeDecodeError:
         print("Could not decode buffer: %s" % buffer)
+
+
+#function to check if the string has digits
 def hasNumbers(inputString):
     return bool(re.search(r'\d', inputString))
+
+
+#function to populate and pre process data from the data.json file
 def populate_data():
     currentDirectory = os.path.dirname(__file__)
     dataFilePath = os.path.join(currentDirectory, 'data.json')
@@ -43,7 +49,8 @@ def populate_data():
                 else:
                     dict[part] =1
             id = data["summaries"][i]["id"]
-            b = Book(title = title, id = id, summary = summary)
+            author = get_author_details(id)
+            b = Book(title = title, id = id, summary = summary, author = author)
             b.save()
             for key in dict:
                 try:
@@ -55,17 +62,19 @@ def populate_data():
                 wc.save()
 
 
+#returns author name given a book ID
 def get_author_details(id):
-    import requests
+    url = "https://ie4djxzt8j.execute-api.eu-west-1.amazonaws.com/coding"
+    payload = "{\"book_id\": "+str(id)+"}"
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    response = requests.request("POST", url, headers=headers, data=payload)
+    res = json.loads(response.text.encode('utf8'))
+    return res["author"]
 
-    url = 'https://www.w3schools.com/python/demopage.php'
-    myobj = {'somekey': 'somevalue'}
 
-    x = requests.post(url, data=myobj)
-    print(x)
-    print(x.text)
-
-
+#To delete all values in table
 def reset_migrations():
     WordCount.objects.all().delete()
     Words.objects.all().delete()
