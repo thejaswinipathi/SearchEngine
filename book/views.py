@@ -62,6 +62,8 @@ def query_book_list(request):
 
 
 #function which returns the Book IDs of top k matches of the query
+# TODO - can be enhanced to search words using the concept of edit distance, where if we have a word like changes
+# TODO - the same can be matched with change, changing, etc..
 def find_words(query, k):
     parts = re.split(r'[;\-,.\s]\s*', query)
     nonEmptyParts = [part.lower() for part in parts if len(part) > 0 and (not hasNumbers(part))]

@@ -1,6 +1,7 @@
 from django.db import models
 
 
+#TODO - Models can be stored in a NOSQL database, instead of SQLLite
 class Book(models.Model):
     title = models.CharField(max_length=128, null=False)
     summary = models.CharField(max_length=128, null=False)
