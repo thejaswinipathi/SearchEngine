@@ -23,10 +23,18 @@ def hasNumbers(inputString):
     return bool(re.search(r'\d', inputString))
 
 
+def populate_data_prod():
+    populate_data('data.json')
+
+
+def populate_data_test():
+    populate_data('data_test.json')
+
 #function to populate and pre process data from the data.json file
-def populate_data():
+#TODO - We can run this job freequently in Airflow DAGs to keep updating our data set
+def populate_data(file):
     currentDirectory = os.path.dirname(__file__)
-    dataFilePath = os.path.join(currentDirectory, 'data.json')
+    dataFilePath = os.path.join(currentDirectory, file)
     with open(dataFilePath) as f:
         stringNew = f.read()
         data = json.loads(re.sub(r"(?i)(?:\\u00[0-9a-f]{2})+", unmangle_utf8, stringNew))

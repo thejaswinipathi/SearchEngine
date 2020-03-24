@@ -1,0 +1,40 @@
+{
+  "titles": [
+    "Anything You Want",
+    "The Richest Man in Babylon",
+    "Letters from a Self-Made Merchant to His Son"
+  ],
+  "queries": [
+    "is your problems",
+    "achieve take book",
+    "life sentences book"
+  ],
+  "summaries": [
+    {
+      "id": 0,
+      "summary": "The Book in Three Sentences: Practicing meditation and mindfulness will make you at least 10 percent happier. Being mindful doesn\u2019t change the problems in your life, but mindfulness does help you respond to your problems rather than react to them. Mindfulness helps you realize that striving for success is fine as long as you accept that the outcome is outside your control."
+    },
+    {
+      "id": 1,
+      "summary": "The Book in Three Sentences: The 10X Rule says that 1) you should set targets for yourself that are 10X greater than what you believe you can achieve and 2) you should take actions that are 10X greater than what you believe are necessary to achieve your goals. The biggest mistake most people make in life is not setting goals high enough. Taking massive action is the only way to fulfill your true potential."
+    },
+    {
+      "id": 2,
+      "summary": "The Book in Three Sentences: The only thing you have that nobody else has is control of your life. The hardest thing of all is to learn to love the journey, not the destination. Get a real life rather than frantically chasing the next level of success."
+    }
+  ],
+  "authors": [
+    {
+      "book_id": 0,
+      "author": "Dan Harris"
+    },
+    {
+      "book_id": 1,
+      "author": "Grant Cardone"
+    },
+    {
+      "book_id": 2,
+      "author": "Anna Quindlen"
+    }
+  ]
+}

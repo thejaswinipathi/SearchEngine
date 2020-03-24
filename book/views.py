@@ -18,10 +18,10 @@ from rest_framework.response import Response
 @api_view(['POST'])
 @renderer_classes([JSONRenderer])
 def query_book(request):
+    resultList = []
     if request.method == 'POST':
         query =request.data["query"]
         k = request.data["k"]
-        resultList = []
         result = find_words(query, k)
         for item in result:
             dict = {}
@@ -40,6 +40,8 @@ def query_book(request):
 # 	"queries": ["my life change", "i love coding"],
 # 	"k":3
 # }
+#TODO - We can use rest serializer and deserializers
+#TODO - We can cache results if we get similar queries, we can return the same response
 @api_view(['POST'])
 @renderer_classes([JSONRenderer])
 def query_book_list(request):
@@ -57,7 +59,8 @@ def query_book_list(request):
                 dict["author"] = Book.objects.get(id = item).author
                 dict["query"] = query
                 resultList.append(dict)
-            totalResult.append(resultList)
+            if len(resultList) !=0:
+                totalResult.append(resultList)
     return Response(totalResult)
 
 
